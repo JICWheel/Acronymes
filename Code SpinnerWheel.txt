@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roue de Définitions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        #wheelContainer {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .slice {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slice span {
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #spinButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #spinButton:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Roue de Définitions</h1>
+    <div id="wheelContainer">
+        <div id="wheel"></div>
+        <button id="spinButton">Tourner la Roue</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const wheel = document.getElementById('wheel');
+          const spinBtn = document.getElementById('spinButton');
+          const result = document.getElementById('result');
+
+          const words = [
+              { word: "CM", definition: "Gestion du changement. Dans le contexte japonais, cela peut faire référence aux pratiques de gestion des modifications dans les entreprises." },
+              { word: "EC", definition: "Contrôle des erreurs. Cela désigne les processus rigoureux de vérification de la qualité et de correction des erreurs." },
+              { word: "GW", definition: "Semaine dorée. Période de congés nationaux au Japon, généralement fin avril - début mai." },
+              { word: "SNS", definition: "Service de réseautage social. Cela fait référence aux plateformes de médias sociaux populaires comme Line ou Twitter." },
+              { word: "NG", definition: "Pas bon ou inacceptable. Terme utilisé pour indiquer qu'une chose n'est pas satisfaisante." }
+          ];
+
+          const colors = ['#FF4C4C', '#FF6B6B', '#FF8A8A', '#FFA8A8', '#FFC7C7'];
+          
+          const totalSlices = words.length;
+          const sliceAngle = 360 / totalSlices;
+
+          // Create the wheel slices
+          for (let i = 0; i < totalSlices; i++) {
+              const slice = document.createElement('div');
+              slice.className = 'slice';
+              slice.style.transform = `rotate(${i * sliceAngle}deg)`;
+              slice.style.backgroundColor = colors[i];
+              
+              const text = document.createElement('span');
+              text.textContent = words[i].word;
+
+              slice.appendChild(text);
+              wheel.appendChild(slice);
+          }
+
+          let spinning = false;
+
+          spinBtn.addEventListener('click', function() {
+              if (spinning) return; // Prevent multiple spins
+              spinning = true;
+
+              const spinAngle = Math.floor(Math.random() * 360) + (720); // At least two full rotations
+              wheel.style.transform = `rotate(${spinAngle}deg)`;
+
+              setTimeout(function() {
+                  spinning = false;
+
+                  // Determine which segment was selected
+                  const winningIndex = totalSlices - Math.floor((spinAngle % 360) / sliceAngle) - 1; 
+                  const winner = words[winningIndex];
+                  
+                  result.innerHTML = `<strong>${winner.word}:</strong> ${winner.definition}`;
+              }, 5000); // Duration of the spin
+          });
+        });
+    </script>
+</body>
+</html>
